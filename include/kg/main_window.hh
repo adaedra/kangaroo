@@ -1,4 +1,6 @@
 #pragma once
+#include "kg/webview.hh"
+
 #include <wx/_wrapper.hh>
 #include <wx/ptr.hh>
 
@@ -10,6 +12,6 @@ namespace kg {
         main_window();
 
     private:
-        wx::ptr<wxAuiNotebook> _notebook;
+        wx::ptr<kg::webview> _webview;
     };
 }

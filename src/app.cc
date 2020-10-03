@@ -1,6 +1,7 @@
 #include "kg/app.hh"
 
 #include "kg/main_window.hh"
+#include "kg/webview.hh"
 
 #include <wx/ptr.hh>
 
