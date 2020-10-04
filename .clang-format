@@ -12,6 +12,11 @@ ConstructorInitializerAllOnOneLineOrOnePerLine: true
 BreakConstructorInitializers: BeforeColon
 ConstructorInitializerIndentWidth: 2
 AlignAfterOpenBracket: AlwaysBreak
+AllowShortFunctionsOnASingleLine: Empty
+ColumnLimit: 120
+AlwaysBreakTemplateDeclarations: MultiLine
+MacroBlockBegin: wxBEGIN_EVENT_TABLE
+MacroBlockEnd: wxEND_EVENT_TABLE
 
 IncludeCategories:
   - Regex: "^<"

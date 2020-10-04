@@ -12,9 +12,11 @@ include_directories(${kangaroo_SOURCE_DIR}/include)
 set(KG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR}/bin)
 add_custom_target(outdir ALL COMMAND ${CMAKE_COMMAND} -E make_directory ${KG_OUTDIR})
 
+add_subdirectory(util    kg.util)
 add_subdirectory(webview kg.webview)
-add_subdirectory(helper kg.helper)
-add_subdirectory(src kg.browser)
+add_subdirectory(helper  kg.helper)
+add_subdirectory(browser kg.browser)
+add_subdirectory(sandbox kg.sandbox)
 
 set(CEF_RESOURCE_FILES
     icudtl.dat
@@ -31,6 +33,8 @@ set(CEF_BINARY_FILES
     d3dcompiler_47.dll
     libEGL.dll
     libGLESv2.dll
+    snapshot_blob.bin
+    v8_context_snapshot.bin
 )
 
 foreach(file IN LISTS CEF_RESOURCE_FILES)

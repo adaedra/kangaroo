@@ -1,12 +1,13 @@
 #include <Windows.h>
-#include <include/capi/cef_app_capi.h>
+#include <include/cef_app.h>
 
 int wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, INT) {
-    cef_main_args_t args { hInstance };
-    int ret { cef_execute_process(&args, nullptr, nullptr) };
+    CefMainArgs args { hInstance };
+    CefEnableHighDPISupport();
 
-    if (ret == -1) {
-        abort();
+    int ret { CefExecuteProcess(args, nullptr, nullptr) };
+    if (ret >= 0) {
+        return ret;
     }
 
     return 0;
