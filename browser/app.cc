@@ -12,6 +12,8 @@ kg::app::app() : _cef { new cef_bridge { *this } }, _wx { new wx_bridge { *this 
 kg::app::~app() {
     KG_LOG_TRACE();
     delete _main_window;
+    // delete _wx;
+    delete _cef;
 }
 
 bool kg::app::init() {
@@ -40,12 +42,17 @@ void kg::app::exit() {
 
 kg::app::cef_bridge::cef_bridge(kg::app & app) : kg::child<kg::app> { app }, CefApp {}, CefBrowserProcessHandler {} {}
 
+kg::app::cef_bridge::~cef_bridge() {
+    KG_LOG_TRACE();
+}
+
 bool kg::app::cef_bridge::init() {
     CefMainArgs args { GetModuleHandleW(nullptr) };
     CefSettings settings;
 
     auto helper = std::filesystem::current_path() / "kg.helper.exe";
     CefString(&settings.browser_subprocess_path) = helper.native();
+    // settings.log_severity = LOGSEVERITY_VERBOSE;
 
     CefEnableHighDPISupport();
     if (!CefInitialize(args, settings, this, nullptr)) {

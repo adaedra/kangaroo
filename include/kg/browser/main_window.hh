@@ -12,9 +12,12 @@ namespace kg {
         ~main_window();
 
     private:
+        void wx_end();
+
         class wx_bridge : public wxFrame, public child<main_window> {
         public:
             wx_bridge(main_window &);
+            ~wx_bridge();
         };
 
         friend class wx_bridge;

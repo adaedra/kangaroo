@@ -10,12 +10,7 @@ kg::webview::webview(wxWindow * parent) : _wx { new wx_bridge { *this, parent } 
 
 kg::webview::~webview() {
     KG_LOG_TRACE();
-    _cef->OnBeforeClose(nullptr);
     _cef->Release();
-
-    if (_cef->HasAtLeastOneRef()) {
-        kg::log::error() << "Remaining refs!";
-    }
 }
 
 void kg::webview::set_size(unsigned int width, unsigned int height) {

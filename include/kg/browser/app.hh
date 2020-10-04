@@ -24,6 +24,7 @@ namespace kg {
         class cef_bridge : public child<app>, public CefApp, public CefBrowserProcessHandler {
         public:
             cef_bridge(app &);
+            ~cef_bridge();
 
             bool init();
 

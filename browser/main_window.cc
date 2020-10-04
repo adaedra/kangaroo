@@ -12,7 +12,17 @@ kg::main_window::~main_window() {
     KG_LOG_TRACE();
 }
 
+void kg::main_window::wx_end() {
+    KG_LOG_TRACE();
+    _wx = nullptr;
+}
+
 kg::main_window::wx_bridge::wx_bridge(kg::main_window & parent)
   : kg::child<kg::main_window> { parent }, wxFrame { nullptr, wxID_ANY, "Kangaroo" } {
     Show();
+}
+
+kg::main_window::wx_bridge::~wx_bridge() {
+    KG_LOG_TRACE();
+    _parent.wx_end();
 }
