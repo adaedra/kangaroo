@@ -22,7 +22,7 @@ void kg::webview::resized(unsigned int width, unsigned int height) {
 }
 
 kg::webview::wx_bridge::wx_bridge(webview & parent, wxWindow * wxParent)
-  : child<webview> { parent }, wxWindow { wxParent, wxID_ANY } {
+  : bridge<webview> { parent }, wxWindow { wxParent, wxID_ANY } {
     SetBackgroundColour(*wxRED);
 }
 
@@ -36,14 +36,16 @@ wxBEGIN_EVENT_TABLE(kg::webview::wx_bridge, wxControl)
 wxEND_EVENT_TABLE()
 
 kg::webview::cef_bridge::cef_bridge(webview & parent)
-  : child<webview> { parent }, CefClient {}, CefLifeSpanHandler {}, _browser { nullptr } {
+  : bridge<webview> { parent }, CefClient {}, CefLifeSpanHandler {}, _browser { nullptr } {
     CefWindowInfo window;
     CefBrowserSettings settings;
 
     wxSize clientRect { _parent._wx->GetSize() };
+#ifdef _WIN32
     RECT rect { 0, 0, clientRect.GetWidth(), clientRect.GetHeight() };
 
-    window.SetAsChild(_parent._wx->GetHWND(), rect);
+    window.SetAsChild(_kg_parent->_wx->GetHWND(), rect);
+#endif
     CefBrowserHost::CreateBrowser(window, this, "https://www.google.fr", settings, nullptr, nullptr);
 }
 
@@ -56,7 +58,9 @@ void kg::webview::cef_bridge::resize_control(unsigned int width, unsigned int he
         return;
     }
 
+#ifdef _WIN32
     SetWindowPos(_browser->GetHost()->GetWindowHandle(), nullptr, 0, 0, width, height, SWP_NOZORDER);
+#endif
     CefDoMessageLoopWork();
 }
 

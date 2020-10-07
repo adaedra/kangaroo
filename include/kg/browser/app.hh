@@ -1,5 +1,5 @@
 #pragma once
-#include "kg/util/child.hh"
+#include "kg/util/bridge.hh"
 
 #include <include/cef_app.h>
 #include <wx/_wrapper.hh>
@@ -21,7 +21,7 @@ namespace kg {
     private:
         main_window * _main_window;
 
-        class cef_bridge : public child<app>, public CefApp, public CefBrowserProcessHandler {
+        class cef_bridge : public bridge<app>, public CefApp, public CefBrowserProcessHandler {
         public:
             cef_bridge(app &);
             ~cef_bridge();
@@ -37,7 +37,7 @@ namespace kg {
         friend class cef_bridge;
         cef_bridge * _cef;
 
-        class wx_bridge : public child<app>, public wxApp {
+        class wx_bridge : public wxApp, public bridge<app> {
         public:
             wx_bridge(app &);
 

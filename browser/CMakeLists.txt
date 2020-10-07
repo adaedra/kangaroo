@@ -1,4 +1,4 @@
-find_package(wxWidgets REQUIRED COMPONENTS base core aui)
+find_package(wxWidgets REQUIRED COMPONENTS base core)
 include("${wxWidgets_USE_FILE}")
 
 add_executable(kg.browser WIN32
@@ -14,3 +14,7 @@ set_target_properties(kg.browser PROPERTIES
 target_link_libraries(kg.browser ${wxWidgets_LIBRARIES} kg.webview)
 target_include_directories(kg.browser PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../kg.webview")
 target_link_directories(kg.browser PRIVATE $ENV{CEF_ROOT}/${CMAKE_BUILD_TYPE})
+
+if(UNIX)
+    target_link_libraries(kg.browser stdc++fs)
+endif()

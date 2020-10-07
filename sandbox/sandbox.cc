@@ -1,9 +1,19 @@
 #include "kg/util/log.hh"
 
-#include <Windows.h>
-#include <filesystem>
+#ifdef _WIN32
+#    include <filesystem>
+#else
+#    include <experimental/filesystem>
+
+namespace std {
+    namespace filesystem = experimental::filesystem;
+}
+#endif
 #include <include/cef_app.h>
 #include <include/cef_client.h>
+#ifdef _WIN32
+#    include <Windows.h>
+#endif
 
 class cef_client : public CefClient, public CefLifeSpanHandler, public CefLoadHandler, public CefDisplayHandler {
 public:
@@ -89,16 +99,23 @@ public:
         CefWindowInfo window;
         CefRefPtr<cef_client> client { new cef_client {} };
 
+#ifdef _WIN32
         window.SetAsPopup(nullptr, "Sandbox");
+#endif
         CefBrowserHost::CreateBrowser(window, client, "https://www.google.com", browserSettings, nullptr, nullptr);
     }
 
     IMPLEMENT_REFCOUNTING(cef_app);
 };
 
+#ifdef _WIN32
 int wWinMain(HINSTANCE instance, HINSTANCE, LPWSTR, INT) {
     CefMainArgs args { instance };
     CefEnableHighDPISupport();
+#else
+int main(int argc, char ** argv) {
+    CefMainArgs args { argc, argv };
+#endif
 
     int ret { CefExecuteProcess(args, nullptr, nullptr) };
     if (ret >= 0) {
@@ -108,8 +125,8 @@ int wWinMain(HINSTANCE instance, HINSTANCE, LPWSTR, INT) {
     CefSettings settings;
     CefRefPtr<cef_app> app { new cef_app {} };
 
-    auto helper = std::filesystem::current_path() / "kg.sandbox.exe";
-    CefString(&settings.browser_subprocess_path) = helper.native();
+    // auto helper = std::filesystem::current_path() / "kg.sandbox.exe";
+    // CefString(&settings.browser_subprocess_path) = helper.native();
 
     if (!CefInitialize(args, settings, app, nullptr)) {
         abort();

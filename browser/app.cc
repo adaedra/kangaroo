@@ -1,10 +1,19 @@
 #include "kg/browser/app.hh"
 
 #include "kg/browser/main_window.hh"
+#include "kg/util/defines.hh"
 #include "kg/util/log.hh"
 #include "kg/webview/webview.hh"
 
-#include <filesystem>
+#ifdef _WIN32
+#    include <filesystem>
+#else
+#    include <experimental/filesystem>
+
+namespace std {
+    namespace filesystem = experimental::filesystem;
+}
+#endif
 #include <wx/ptr.hh>
 
 kg::app::app() : _cef { new cef_bridge { *this } }, _wx { new wx_bridge { *this } }, _main_window { nullptr } {}
@@ -12,12 +21,10 @@ kg::app::app() : _cef { new cef_bridge { *this } }, _wx { new wx_bridge { *this 
 kg::app::~app() {
     KG_LOG_TRACE();
     delete _main_window;
-    // delete _wx;
-    delete _cef;
 }
 
 bool kg::app::init() {
-    KG_LOG_TRACE();
+    KG_LOG_TRACE() << " this = " << this;
     return _cef->init();
 }
 
@@ -38,23 +45,27 @@ void kg::app::exit() {
     // CefShutdown();
 }
 
-#pragma mark cef_bridge
-
-kg::app::cef_bridge::cef_bridge(kg::app & app) : kg::child<kg::app> { app }, CefApp {}, CefBrowserProcessHandler {} {}
+kg::app::cef_bridge::cef_bridge(kg::app & app) : bridge<kg::app> { app }, CefApp {}, CefBrowserProcessHandler {} {}
 
 kg::app::cef_bridge::~cef_bridge() {
     KG_LOG_TRACE();
 }
 
 bool kg::app::cef_bridge::init() {
+#ifdef _WIN32
     CefMainArgs args { GetModuleHandleW(nullptr) };
+#else
+    CefMainArgs args { wxTheApp->argc, wxTheApp->argv };
+#endif
     CefSettings settings;
 
-    auto helper = std::filesystem::current_path() / "kg.helper.exe";
+    auto helper = std::filesystem::current_path() / kg::KG_HELPER_BINARY;
     CefString(&settings.browser_subprocess_path) = helper.native();
     // settings.log_severity = LOGSEVERITY_VERBOSE;
 
+#ifdef _WIN32
     CefEnableHighDPISupport();
+#endif
     if (!CefInitialize(args, settings, this, nullptr)) {
         return false;
     }
@@ -70,9 +81,7 @@ void kg::app::cef_bridge::OnContextInitialized() {
     _parent.ready();
 }
 
-#pragma mark wx_bridge
-
-kg::app::wx_bridge::wx_bridge(kg::app & app) : kg::child<kg::app> { app }, wxApp {} {}
+kg::app::wx_bridge::wx_bridge(kg::app & app) : wxApp {}, kg::bridge<kg::app> { app } {}
 
 bool kg::app::wx_bridge::OnInit() {
     return _parent.init();

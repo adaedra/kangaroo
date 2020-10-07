@@ -1,5 +1,6 @@
 #include "kg/util/log.hh"
 
+#ifdef _WIN32
 #include <Windows.h>
 
 kg::log::~log() {
@@ -12,6 +13,13 @@ kg::log::~log() {
     OutputDebugStringW(buf);
     delete[] buf;
 }
+#else
+#include <iostream>
+
+kg::log::~log() {
+    std::clog << _stream.str() << std::endl;
+}
+#endif
 
 kg::log kg::log::debug() {
     return kg::log { "DEBUG" };

@@ -1,5 +1,5 @@
 #pragma once
-#include "kg/util/child.hh"
+#include "kg/util/bridge.hh"
 #include "kg/webview/webview.hh"
 
 #include <wx/_wrapper.hh>
@@ -14,9 +14,9 @@ namespace kg {
     private:
         void wx_end();
 
-        class wx_bridge : public wxFrame, public child<main_window> {
+        class wx_bridge : public wxFrame, public bridge<main_window> {
         public:
-            wx_bridge(main_window &);
+            wx_bridge(main_window *);
             ~wx_bridge();
         };
 

@@ -1,6 +1,6 @@
 #pragma once
+#include "kg/util/bridge.hh"
 #include "kg_webview_export.hh"
-#include "kg/util/child.hh"
 
 #include <include/cef_client.h>
 #include <wx/_wrapper.hh>
@@ -16,7 +16,7 @@ namespace kg {
     private:
         void resized(unsigned int, unsigned int);
 
-        class wx_bridge : public child<webview>, public wxWindow {
+        class wx_bridge : public bridge<webview>, public wxWindow {
         public:
             wx_bridge(webview &, wxWindow *);
 
@@ -28,7 +28,7 @@ namespace kg {
         friend class wx_bridge;
         wx_bridge * _wx;
 
-        class cef_bridge : public child<webview>, public CefClient, public CefLifeSpanHandler {
+        class cef_bridge : public bridge<webview>, public CefClient, public CefLifeSpanHandler {
         public:
             cef_bridge(webview &);
             ~cef_bridge();
