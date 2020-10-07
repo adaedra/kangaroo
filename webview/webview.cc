@@ -85,7 +85,7 @@ void kg::WebView::CreateBrowser() {
 
 #ifdef _WIN32
 static void resizeBrowser(kg::WebView *, CefRefPtr<CefBrowser> browser, unsigned int width, unsigned int height) {
-    SetWindowPos(_browser->GetHost()->GetWindowHandle(), nullptr, 0, 0, width, height, SWP_NOZORDER);
+    SetWindowPos(browser->GetHost()->GetWindowHandle(), nullptr, 0, 0, width, height, SWP_NOZORDER);
 }
 #else
 static void

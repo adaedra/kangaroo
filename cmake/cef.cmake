@@ -31,20 +31,20 @@ endif()
 foreach(file IN LISTS CEF_RESOURCE_FILES)
     add_custom_command(
         OUTPUT ${KG_OUTDIR}/${file}
-        COMMAND cmake -E copy $ENV{CEF_ROOT}/Resources/${file} ${KG_OUTDIR}/${file}
+        COMMAND cmake -E copy ${CEF_ROOT}/Resources/${file} ${KG_OUTDIR}/${file}
     )
 endforeach()
 
 foreach(file IN LISTS CEF_BINARY_FILES)
     add_custom_command(
         OUTPUT ${KG_OUTDIR}/${file}
-        COMMAND cmake -E copy $ENV{CEF_ROOT}/${CMAKE_BUILD_TYPE}/${file} ${KG_OUTDIR}/${file}
+        COMMAND cmake -E copy ${CEF_ROOT}/${CMAKE_BUILD_TYPE}/${file} ${KG_OUTDIR}/${file}
     )
 endforeach()
 
 add_custom_command(
     OUTPUT ${KG_OUTDIR}/locales
-    COMMAND cmake -E copy_directory $ENV{CEF_ROOT}/Resources/locales ${KG_OUTDIR}/locales
+    COMMAND cmake -E copy_directory ${CEF_ROOT}/Resources/locales ${KG_OUTDIR}/locales
 )
 
 list(TRANSFORM CEF_RESOURCE_FILES PREPEND ${KG_OUTDIR}/)

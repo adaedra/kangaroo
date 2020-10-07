@@ -90,7 +90,7 @@ wxEND_EVENT_TABLE()
 
 #ifdef _WIN32
 CefMainArgs kg::App::GetCefMainArgs() {
-    return CefMainArgs args { GetModuleHandleW(nullptr) };
+    return CefMainArgs { GetModuleHandleW(nullptr) };
 }
 #else
 CefMainArgs kg::App::GetCefMainArgs() {

@@ -11,7 +11,8 @@ find_package(CEF REQUIRED)
 add_subdirectory(${CEF_LIBCEF_DLL_WRAPPER_PATH} libcef_dll_wrapper)
 
 if(WIN32)
-    add_library(cef ALIAS libcef)
+    add_library(cef INTERFACE IMPORTED GLOBAL)
+    target_link_libraries(cef INTERFACE libcef)
 endif()
 
 add_library(kg.webview SHARED
