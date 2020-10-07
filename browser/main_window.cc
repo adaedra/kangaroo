@@ -4,16 +4,12 @@
 
 kg::main_window::main_window() : _wx { new wx_bridge { this } }, _webview { KG_LOG_SHOW(_wx) } {
     wxSize size { _wx->GetClientSize() };
-    KG_LOG_TRACE() << " size = (" << size.GetWidth() << ", " << size.GetHeight() << ")";
     _webview.set_size(size.GetWidth(), size.GetHeight());
 }
 
-kg::main_window::~main_window() {
-    KG_LOG_TRACE();
-}
+kg::main_window::~main_window() {}
 
 void kg::main_window::wx_end() {
-    KG_LOG_TRACE();
     _wx = nullptr;
 }
 
@@ -25,6 +21,5 @@ kg::main_window::wx_bridge::wx_bridge(kg::main_window * parent)
 }
 
 kg::main_window::wx_bridge::~wx_bridge() {
-    KG_LOG_TRACE();
     _parent.wx_end();
 }

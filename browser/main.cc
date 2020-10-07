@@ -16,7 +16,6 @@ int main(int argc, char ** argv) {
 #endif
 
     delete &*app;
-    KG_LOG_TRACE();
 
     CefShutdown();
     return ret;

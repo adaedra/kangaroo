@@ -18,7 +18,6 @@ kg::webview::webview(wxWindow * parent) : _wx { new wx_bridge { *this, parent } 
 }
 
 kg::webview::~webview() {
-    KG_LOG_TRACE();
     _cef->release_browser();
     _cef->Release();
 }
@@ -52,7 +51,6 @@ void kg::webview::wx_bridge::GTKHandleRealized() {
 #endif
 
 bool kg::webview::wx_bridge::ProcessEvent(wxEvent & e) {
-    KG_LOG_TRACE();
     CefDoMessageLoopWork();
     return wxWindow::ProcessEvent(e);
 }
@@ -77,16 +75,13 @@ void kg::webview::cef_bridge::create_browser() {
     CefRect rect { 0, 0, clientRect.GetWidth(), clientRect.GetHeight() };
     unsigned long xid { gdk_x11_drawable_get_xid(_parent._wx->GetHandle()->window) };
 
-    KG_LOG_TRACE() << " " << KG_LOG_VAR(xid);
     window.SetAsChild(xid, rect);
 #endif
 
     CefBrowserHost::CreateBrowser(window, this, "https://www.google.fr", settings, nullptr, nullptr);
 }
 
-kg::webview::cef_bridge::~cef_bridge() {
-    KG_LOG_TRACE();
-}
+kg::webview::cef_bridge::~cef_bridge() {}
 
 void kg::webview::cef_bridge::resize_control(unsigned int width, unsigned int height) {
     if (!_browser) {
@@ -112,19 +107,15 @@ void kg::webview::cef_bridge::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
     _browser = browser;
 
     wxSize clientRect { _parent._wx->GetSize() };
-    KG_LOG_TRACE() << " size = (" << clientRect.GetWidth() << ", " << clientRect.GetHeight() << ")";
     resize_control(clientRect.GetWidth(), clientRect.GetHeight());
 }
 
 void kg::webview::cef_bridge::OnBeforeClose(CefRefPtr<CefBrowser>) {
-    KG_LOG_TRACE();
-
     _browser = nullptr;
 }
 
 void kg::webview::cef_bridge::release_browser() {
     if (_browser) {
-        KG_LOG_TRACE();
         _browser->GetHost()->CloseBrowser(true);
     }
 

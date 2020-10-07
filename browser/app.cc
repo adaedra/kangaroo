@@ -19,19 +19,15 @@ namespace std {
 kg::app::app() : _cef { new cef_bridge { *this } }, _wx { new wx_bridge { *this } }, _main_window { nullptr } {}
 
 kg::app::~app() {
-    KG_LOG_TRACE();
     delete _main_window;
 }
 
 bool kg::app::init() {
-    KG_LOG_TRACE() << " this = " << this;
     return _cef->init();
 }
 
 void kg::app::ready() {
     _main_window = new kg::main_window {};
-
-    KG_LOG_TRACE();
 }
 
 bool kg::app::idle() {
@@ -39,7 +35,6 @@ bool kg::app::idle() {
 }
 
 void kg::app::exit() {
-    KG_LOG_TRACE();
     // Can't do that here as _main_window is still existing. Have to be smarter.
     // CefShutdown();
 }
@@ -47,9 +42,7 @@ void kg::app::exit() {
 kg::app::cef_bridge::cef_bridge(kg::app & app)
   : bridge<kg::app> { app }, CefApp {}, CefBrowserProcessHandler {}, _has_work { false } {}
 
-kg::app::cef_bridge::~cef_bridge() {
-    KG_LOG_TRACE();
-}
+kg::app::cef_bridge::~cef_bridge() {}
 
 bool kg::app::cef_bridge::init() {
 #ifdef _WIN32
@@ -71,20 +64,16 @@ bool kg::app::cef_bridge::init() {
         return false;
     }
 
-    KG_LOG_TRACE() << " Cef Initialized";
     return true;
 }
 
 bool kg::app::cef_bridge::idle() {
-    KG_LOG_TRACE() << " " KG_LOG_VAR(_has_work);
-
     if (!_has_work) {
         return false;
     }
 
     _has_work = false;
     CefDoMessageLoopWork();
-    KG_LOG_TRACE() << " " << KG_LOG_VAR(_has_work);
 
     return _has_work;
 }
@@ -98,12 +87,13 @@ void kg::app::cef_bridge::OnContextInitialized() {
 }
 
 void kg::app::cef_bridge::OnScheduleMessagePumpWork(int64 delay) {
-    KG_LOG_TRACE() << " " << KG_LOG_VAR(delay);
     _has_work = true;
 
     if (delay <= 0) {
         wxWakeUpIdle();
     }
+
+    // TODO: Clock for delay > 0
 }
 
 kg::app::wx_bridge::wx_bridge(kg::app & app) : wxApp {}, kg::bridge<kg::app> { app } {}
