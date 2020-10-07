@@ -15,12 +15,17 @@ namespace kg {
 
     private:
         void resized(unsigned int, unsigned int);
+        void realized();
 
         class wx_bridge : public bridge<webview>, public wxWindow {
         public:
             wx_bridge(webview &, wxWindow *);
 
             void OnResize(wxSizeEvent &);
+#ifndef _WIN32
+            virtual void GTKHandleRealized() override;
+#endif
+            virtual bool ProcessEvent(wxEvent &) override;
 
             wxDECLARE_EVENT_TABLE();
         };
@@ -33,7 +38,9 @@ namespace kg {
             cef_bridge(webview &);
             ~cef_bridge();
 
+            void create_browser();
             void resize_control(unsigned int width, unsigned int height);
+            void release_browser();
 
             virtual CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() override;
             virtual void OnAfterCreated(CefRefPtr<CefBrowser>) override;

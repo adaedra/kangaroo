@@ -1,6 +1,10 @@
 find_package(wxWidgets REQUIRED COMPONENTS base core)
 include(${wxWidgets_USE_FILE})
 
+if(UNIX)
+    find_package(GTK2 2.24 REQUIRED gtk)
+endif()
+
 include (GenerateExportHeader)
 
 find_package(CEF REQUIRED)
@@ -23,3 +27,8 @@ target_link_libraries(kg.webview kg.util libcef_dll_wrapper cef ${wxWidgets_LIBR
 target_include_directories(kg.webview PUBLIC ${CEF_INCLUDE_PATH})
 target_include_directories(kg.webview PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_link_directories(kg.webview PRIVATE ${_CEF_ROOT}/${CMAKE_BUILD_TYPE})
+
+if(UNIX)
+    target_link_libraries(kg.webview ${GTK2_LIBRARIES})
+    target_include_directories(kg.webview PUBLIC ${GTK2_INCLUDE_DIRS})
+endif()

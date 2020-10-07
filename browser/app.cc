@@ -35,7 +35,6 @@ void kg::app::ready() {
 }
 
 void kg::app::idle() {
-    // KG_LOG_TRACE();
     CefDoMessageLoopWork();
 }
 
@@ -70,6 +69,7 @@ bool kg::app::cef_bridge::init() {
         return false;
     }
 
+    KG_LOG_TRACE() << " Cef Initialized";
     return true;
 }
 
