@@ -16,101 +16,82 @@ namespace std {
 #endif
 #include <wx/ptr.hh>
 
-kg::app::app() : _cef { new cef_bridge { *this } }, _wx { new wx_bridge { *this } }, _main_window { nullptr } {}
+class kg::App::CefBridge : public CefApp, public CefBrowserProcessHandler {
+public:
+    CefBridge(kg::App * app) : CefApp {}, CefBrowserProcessHandler {}, _app { app } {
+        CefMainArgs args { _app->GetCefMainArgs() };
+        CefSettings settings;
+        auto helper = std::filesystem::current_path() / kg::HELPER_BINARY;
 
-kg::app::~app() {}
+        settings.external_message_pump = true;
+        CefString(&settings.browser_subprocess_path) = helper.native();
 
-bool kg::app::init() {
-    return _cef->init();
-}
-
-void kg::app::ready() {
-    _main_window = new kg::MainWindow {};
-}
-
-bool kg::app::idle() {
-    return _cef->idle();
-}
-
-void kg::app::exit() {
-    // Can't do that here as _main_window is still existing. Have to be smarter.
-    // CefShutdown();
-}
-
-kg::app::cef_bridge::cef_bridge(kg::app & app)
-  : bridge<kg::app> { app }, CefApp {}, CefBrowserProcessHandler {}, _has_work { false } {}
-
-kg::app::cef_bridge::~cef_bridge() {}
-
-bool kg::app::cef_bridge::init() {
-#ifdef _WIN32
-    CefMainArgs args { GetModuleHandleW(nullptr) };
-#else
-    CefMainArgs args { wxTheApp->argc, wxTheApp->argv };
-#endif
-    CefSettings settings;
-
-    auto helper = std::filesystem::current_path() / kg::KG_HELPER_BINARY;
-    CefString(&settings.browser_subprocess_path) = helper.native();
-    // settings.log_severity = LOGSEVERITY_VERBOSE;
-    settings.external_message_pump = true;
-
-#ifdef _WIN32
-    CefEnableHighDPISupport();
-#endif
-    if (!CefInitialize(args, settings, this, nullptr)) {
-        return false;
+        CefPreInit();
+        CefInitialize(args, settings, this, nullptr);
     }
 
-    return true;
-}
-
-bool kg::app::cef_bridge::idle() {
-    if (!_has_work) {
-        return false;
+    virtual CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler() override {
+        return this;
     }
 
-    _has_work = false;
-    CefDoMessageLoopWork();
+    virtual void OnContextInitialized() override {
+        _app->OnCefReady();
+    }
 
-    return _has_work;
-}
-
-CefRefPtr<CefBrowserProcessHandler> kg::app::cef_bridge::GetBrowserProcessHandler() {
-    return this;
-}
-
-void kg::app::cef_bridge::OnContextInitialized() {
-    _parent.ready();
-}
-
-void kg::app::cef_bridge::OnScheduleMessagePumpWork(int64 delay) {
-    _has_work = true;
-
-    if (delay <= 0) {
+    virtual void OnScheduleMessagePumpWork(int64 delay) override {
         wxWakeUpIdle();
     }
 
-    // TODO: Clock for delay > 0
+    IMPLEMENT_REFCOUNTING(CefBridge);
+
+private:
+    void CefPreInit();
+
+    kg::App * _app;
+};
+
+#ifdef _WIN32
+void kg::App::CefBridge::CefPreInit() {
+    CefEnableHighDPISupport();
+}
+#else
+void kg::App::CefBridge::CefPreInit() {}
+#endif
+
+kg::App::App() : wxApp {}, _main_window { nullptr } {}
+
+kg::App::~App() {}
+
+bool kg::App::OnInit() {
+    _cef = new CefBridge { this };
+    return true;
 }
 
-kg::app::wx_bridge::wx_bridge(kg::app & app) : wxApp {}, kg::bridge<kg::app> { app } {}
+int kg::App::OnExit() {
+    _cef = nullptr;
+    CefShutdown();
 
-bool kg::app::wx_bridge::OnInit() {
-    return _parent.init();
-}
-
-int kg::app::wx_bridge::OnExit() {
-    _parent.exit();
     return 0;
 }
 
-void kg::app::wx_bridge::OnIdle(wxIdleEvent & event) {
-    if (_parent.idle()) {
-        event.RequestMore(true);
-    }
+wxBEGIN_EVENT_TABLE(kg::App, wxApp)
+    EVT_IDLE(kg::App::OnIdle)
+wxEND_EVENT_TABLE()
+
+#ifdef _WIN32
+CefMainArgs kg::App::GetCefMainArgs() {
+    return CefMainArgs args { GetModuleHandleW(nullptr) };
+}
+#else
+CefMainArgs kg::App::GetCefMainArgs() {
+    return CefMainArgs { argc, argv };
+}
+#endif
+
+void kg::App::OnCefReady() {
+    _main_window = new MainWindow {};
 }
 
-wxBEGIN_EVENT_TABLE(kg::app::wx_bridge, wxApp)
-    EVT_IDLE(kg::app::wx_bridge::OnIdle)
-wxEND_EVENT_TABLE()
+void kg::App::OnIdle(wxIdleEvent &) {
+    CefDoMessageLoopWork();
+}

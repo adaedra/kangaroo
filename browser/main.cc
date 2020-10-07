@@ -4,19 +4,14 @@
 
 #ifdef _WIN32
 int WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdline, INT mode) {
+    kg::App app {};
+
+    return wxEntry(instance, prevInstance, cmdline, mode);
+}
 #else
 int main(int argc, char ** argv) {
-#endif
-    // When the problem of CefShutdown() in app is fixed, simplify this function back.
-    wx::ptr<kg::app> app {};
-#ifdef _WIN32
-    int ret { wxEntry(instance, prevInstance, cmdline, mode) };
-#else
-    int ret { wxEntry(argc, argv) };
-#endif
+    kg::App * app = new kg::App {};
 
-    delete &*app;
-
-    CefShutdown();
-    return ret;
+    return wxEntry(argc, argv);
 }
+#endif

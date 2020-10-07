@@ -8,52 +8,25 @@
 namespace kg {
     class MainWindow;
 
-    class app {
+    class App : wxApp {
     public:
-        app();
-        ~app();
+        App();
+        virtual ~App();
 
-        bool init();
-        void ready();
-        bool idle();
-        void exit();
+        virtual bool OnInit() override;
+        virtual int OnExit() override;
+
+        wxDECLARE_EVENT_TABLE();
 
     private:
+        CefMainArgs GetCefMainArgs();
+        void OnCefReady();
+        void OnIdle(wxIdleEvent &);
+
+        class CefBridge;
+        friend class CefBridge;
+
+        CefBridge * _cef;
         MainWindow * _main_window;
-
-        class cef_bridge : public bridge<app>, public CefApp, public CefBrowserProcessHandler {
-        public:
-            cef_bridge(app &);
-            ~cef_bridge();
-
-            bool init();
-            bool idle();
-
-            virtual CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler() override;
-            virtual void OnContextInitialized() override;
-            virtual void OnScheduleMessagePumpWork(int64 delay) override;
-
-            IMPLEMENT_REFCOUNTING(cef_bridge);
-
-        private:
-            bool _has_work;
-        };
-
-        friend class cef_bridge;
-        cef_bridge * _cef;
-
-        class wx_bridge : public wxApp, public bridge<app> {
-        public:
-            wx_bridge(app &);
-
-            virtual bool OnInit() override;
-            virtual int OnExit() override;
-            void OnIdle(wxIdleEvent &);
-
-            wxDECLARE_EVENT_TABLE();
-        };
-
-        friend class wx_bridge;
-        wx_bridge * _wx;
     };
 }
