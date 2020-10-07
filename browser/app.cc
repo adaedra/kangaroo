@@ -34,8 +34,8 @@ void kg::app::ready() {
     KG_LOG_TRACE();
 }
 
-void kg::app::idle() {
-    CefDoMessageLoopWork();
+bool kg::app::idle() {
+    return _cef->idle();
 }
 
 void kg::app::exit() {
@@ -44,7 +44,8 @@ void kg::app::exit() {
     // CefShutdown();
 }
 
-kg::app::cef_bridge::cef_bridge(kg::app & app) : bridge<kg::app> { app }, CefApp {}, CefBrowserProcessHandler {} {}
+kg::app::cef_bridge::cef_bridge(kg::app & app)
+  : bridge<kg::app> { app }, CefApp {}, CefBrowserProcessHandler {}, _has_work { false } {}
 
 kg::app::cef_bridge::~cef_bridge() {
     KG_LOG_TRACE();
@@ -61,6 +62,7 @@ bool kg::app::cef_bridge::init() {
     auto helper = std::filesystem::current_path() / kg::KG_HELPER_BINARY;
     CefString(&settings.browser_subprocess_path) = helper.native();
     // settings.log_severity = LOGSEVERITY_VERBOSE;
+    settings.external_message_pump = true;
 
 #ifdef _WIN32
     CefEnableHighDPISupport();
@@ -73,12 +75,35 @@ bool kg::app::cef_bridge::init() {
     return true;
 }
 
+bool kg::app::cef_bridge::idle() {
+    KG_LOG_TRACE() << " " KG_LOG_VAR(_has_work);
+
+    if (!_has_work) {
+        return false;
+    }
+
+    _has_work = false;
+    CefDoMessageLoopWork();
+    KG_LOG_TRACE() << " " << KG_LOG_VAR(_has_work);
+
+    return _has_work;
+}
+
 CefRefPtr<CefBrowserProcessHandler> kg::app::cef_bridge::GetBrowserProcessHandler() {
     return this;
 }
 
 void kg::app::cef_bridge::OnContextInitialized() {
     _parent.ready();
+}
+
+void kg::app::cef_bridge::OnScheduleMessagePumpWork(int64 delay) {
+    KG_LOG_TRACE() << " " << KG_LOG_VAR(delay);
+    _has_work = true;
+
+    if (delay <= 0) {
+        wxWakeUpIdle();
+    }
 }
 
 kg::app::wx_bridge::wx_bridge(kg::app & app) : wxApp {}, kg::bridge<kg::app> { app } {}
@@ -92,8 +117,10 @@ int kg::app::wx_bridge::OnExit() {
     return 0;
 }
 
-void kg::app::wx_bridge::OnIdle(wxIdleEvent &) {
-    _parent.idle();
+void kg::app::wx_bridge::OnIdle(wxIdleEvent & event) {
+    if (_parent.idle()) {
+        event.RequestMore(true);
+    }
 }
 
 wxBEGIN_EVENT_TABLE(kg::app::wx_bridge, wxApp)

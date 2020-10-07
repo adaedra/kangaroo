@@ -15,7 +15,7 @@ namespace kg {
 
         bool init();
         void ready();
-        void idle();
+        bool idle();
         void exit();
 
     private:
@@ -27,11 +27,16 @@ namespace kg {
             ~cef_bridge();
 
             bool init();
+            bool idle();
 
             virtual CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler() override;
             virtual void OnContextInitialized() override;
+            virtual void OnScheduleMessagePumpWork(int64 delay) override;
 
             IMPLEMENT_REFCOUNTING(cef_bridge);
+
+        private:
+            bool _has_work;
         };
 
         friend class cef_bridge;
