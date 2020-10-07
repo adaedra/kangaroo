@@ -1,9 +1,7 @@
 #pragma once
-#include "kg/util/bridge.hh"
 
 #include <include/cef_app.h>
 #include <wx/_wrapper.hh>
-#include <wx/ptr.hh>
 
 namespace kg {
     class MainWindow;

@@ -69,7 +69,6 @@ static void prepareWindow(kg::WebView * webview, CefWindowInfo & window) {
 #endif
 
 bool kg::WebView::TryBefore(wxEvent &) {
-    KG_LOG_TRACE();
     CefDoMessageLoopWork();
     return false;
 }

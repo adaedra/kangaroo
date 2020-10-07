@@ -6,7 +6,6 @@
 #include "kg/webview/webview.hh"
 
 #include <functional>
-#include <wx/ptr.hh>
 
 #ifdef _WIN32
 #    include <filesystem>
