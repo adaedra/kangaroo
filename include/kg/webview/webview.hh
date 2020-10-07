@@ -1,58 +1,31 @@
 #pragma once
-#include "kg/util/bridge.hh"
 #include "kg_webview_export.hh"
 
 #include <include/cef_client.h>
 #include <wx/_wrapper.hh>
 
 namespace kg {
-    class webview {
+    class WebView : public wxWindow {
     public:
-        KG_WEBVIEW_EXPORT webview(wxWindow * parent);
-        KG_WEBVIEW_EXPORT ~webview();
+        KG_WEBVIEW_EXPORT WebView(wxWindow * parent);
+        KG_WEBVIEW_EXPORT virtual ~WebView();
 
-        KG_WEBVIEW_EXPORT void set_size(unsigned int width, unsigned int height);
+#ifndef _WIN32
+        virtual void GTKHandleRealized() override;
+#endif
+
+        wxDECLARE_EVENT_TABLE();
+
+    protected:
+        virtual bool TryBefore(wxEvent &) override;
 
     private:
-        void resized(unsigned int, unsigned int);
-        void realized();
+        void CreateBrowser();
+        void OnSize(wxSizeEvent &);
+        void OnDestroy(wxWindowDestroyEvent &);
 
-        class wx_bridge : public bridge<webview>, public wxWindow {
-        public:
-            wx_bridge(webview &, wxWindow *);
+        class CefBridge;
 
-            void OnResize(wxSizeEvent &);
-#ifndef _WIN32
-            virtual void GTKHandleRealized() override;
-#endif
-            virtual bool ProcessEvent(wxEvent &) override;
-
-            wxDECLARE_EVENT_TABLE();
-        };
-
-        friend class wx_bridge;
-        wx_bridge * _wx;
-
-        class cef_bridge : public bridge<webview>, public CefClient, public CefLifeSpanHandler {
-        public:
-            cef_bridge(webview &);
-            ~cef_bridge();
-
-            void create_browser();
-            void resize_control(unsigned int width, unsigned int height);
-            void release_browser();
-
-            virtual CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() override;
-            virtual void OnAfterCreated(CefRefPtr<CefBrowser>) override;
-            virtual void OnBeforeClose(CefRefPtr<CefBrowser>) override;
-
-            IMPLEMENT_REFCOUNTING(cef_bridge);
-
-        private:
-            CefRefPtr<CefBrowser> _browser;
-        };
-
-        friend class cef_bridge;
-        cef_bridge * _cef;
+        CefRefPtr<CefBridge> _cef;
     };
 }

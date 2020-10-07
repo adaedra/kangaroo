@@ -6,7 +6,7 @@
 #include <wx/ptr.hh>
 
 namespace kg {
-    class main_window;
+    class MainWindow;
 
     class app {
     public:
@@ -19,7 +19,7 @@ namespace kg {
         void exit();
 
     private:
-        main_window * _main_window;
+        MainWindow * _main_window;
 
         class cef_bridge : public bridge<app>, public CefApp, public CefBrowserProcessHandler {
         public:

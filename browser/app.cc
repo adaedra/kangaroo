@@ -18,16 +18,14 @@ namespace std {
 
 kg::app::app() : _cef { new cef_bridge { *this } }, _wx { new wx_bridge { *this } }, _main_window { nullptr } {}
 
-kg::app::~app() {
-    delete _main_window;
-}
+kg::app::~app() {}
 
 bool kg::app::init() {
     return _cef->init();
 }
 
 void kg::app::ready() {
-    _main_window = new kg::main_window {};
+    _main_window = new kg::MainWindow {};
 }
 
 bool kg::app::idle() {
