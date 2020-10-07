@@ -7,7 +7,7 @@ namespace kg {
     class MainWindow : public wxFrame {
     public:
         MainWindow();
-        ~MainWindow();
+        virtual ~MainWindow();
 
     private:
         WebView * _webview;
