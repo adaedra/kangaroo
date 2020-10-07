@@ -5,6 +5,9 @@
 #include "kg/util/log.hh"
 #include "kg/webview/webview.hh"
 
+#include <functional>
+#include <wx/ptr.hh>
+
 #ifdef _WIN32
 #    include <filesystem>
 #else
@@ -14,11 +17,12 @@ namespace std {
     namespace filesystem = experimental::filesystem;
 }
 #endif
-#include <wx/ptr.hh>
 
 class kg::App::CefBridge : public CefApp, public CefBrowserProcessHandler {
 public:
-    CefBridge(kg::App * app) : CefApp {}, CefBrowserProcessHandler {}, _app { app } {
+    CefBridge(kg::App * app) : CefApp {}, CefBrowserProcessHandler {}, _app { app }, _timer {} {
+        _timer.Bind(wxEVT_TIMER, [](wxTimerEvent &) { wxWakeUpIdle(); });
+
         CefMainArgs args { _app->GetCefMainArgs() };
         CefSettings settings;
         auto helper = std::filesystem::current_path() / kg::HELPER_BINARY;
@@ -39,7 +43,13 @@ public:
     }
 
     virtual void OnScheduleMessagePumpWork(int64 delay) override {
-        wxWakeUpIdle();
+        if (delay <= 0) {
+            wxWakeUpIdle();
+            return;
+        }
+
+        _timer.Stop();
+        _timer.StartOnce(delay);
     }
 
     IMPLEMENT_REFCOUNTING(CefBridge);
@@ -48,6 +58,7 @@ private:
     void CefPreInit();
 
     kg::App * _app;
+    wxTimer _timer;
 };
 
 #ifdef _WIN32
