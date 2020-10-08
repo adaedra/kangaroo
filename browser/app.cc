@@ -4,18 +4,9 @@
 #include "kg/util/defines.hh"
 #include "kg/util/log.hh"
 #include "kg/webview/webview.hh"
+#include "kg_features.h"
 
 #include <functional>
-
-#ifdef _WIN32
-#    include <filesystem>
-#else
-#    include <experimental/filesystem>
-
-namespace std {
-    namespace filesystem = experimental::filesystem;
-}
-#endif
 
 class kg::App::CefBridge : public CefApp, public CefBrowserProcessHandler {
 public:
@@ -24,7 +15,7 @@ public:
 
         CefMainArgs args { _app->GetCefMainArgs() };
         CefSettings settings;
-        auto helper = std::filesystem::current_path() / kg::HELPER_BINARY;
+        auto helper = std_fs_impl::current_path() / kg::HELPER_BINARY;
 
         settings.external_message_pump = true;
         CefString(&settings.browser_subprocess_path) = helper.native();

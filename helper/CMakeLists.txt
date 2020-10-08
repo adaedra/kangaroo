@@ -5,5 +5,5 @@ kg_target(
         helper.cc
     WIN_SOURCES
         ../resources/kangaroo.manifest
-    LINK cef::dll libcef_dll_wrapper
+    LINK cef.library cef.wrapper
 )

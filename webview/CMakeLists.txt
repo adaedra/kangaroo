@@ -7,15 +7,12 @@ endif()
 
 include (GenerateExportHeader)
 
-find_package(CEF REQUIRED)
-add_subdirectory(${CEF_LIBCEF_DLL_WRAPPER_PATH} libcef_dll_wrapper)
-
 kg_target(
     NAME kg.webview
     TYPE LIBRARY SHARED
     SOURCES
         webview.cc ../include/kg/webview/webview.hh
-    LINK kg.util cef::dll libcef_dll_wrapper
+    LINK kg.util cef.library cef.wrapper
 )
     
 generate_export_header(kg.webview EXPORT_FILE_NAME kg_webview_export.hh)

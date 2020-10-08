@@ -1,19 +1,8 @@
 #include "kg/util/log.hh"
+#include "kg_features.h"
 
-#ifdef _WIN32
-#    include <filesystem>
-#else
-#    include <experimental/filesystem>
-
-namespace std {
-    namespace filesystem = experimental::filesystem;
-}
-#endif
 #include <include/cef_app.h>
 #include <include/cef_client.h>
-#ifdef _WIN32
-#    include <Windows.h>
-#endif
 
 class cef_client : public CefClient, public CefLifeSpanHandler, public CefLoadHandler, public CefDisplayHandler {
 public:
@@ -125,7 +114,7 @@ int main(int argc, char ** argv) {
     CefSettings settings;
     CefRefPtr<cef_app> app { new cef_app {} };
 
-    // auto helper = std::filesystem::current_path() / "kg.sandbox.exe";
+    // auto helper = std_fs_impl::current_path() / "kg.sandbox.exe";
     // CefString(&settings.browser_subprocess_path) = helper.native();
 
     if (!CefInitialize(args, settings, app, nullptr)) {
@@ -133,15 +122,6 @@ int main(int argc, char ** argv) {
     }
 
     CefRunMessageLoop();
-    /*
-    MSG msg;
-    BOOL ret { 1 };
-
-    do {
-        ret = GetMessageW(&msg, nullptr, 0, 0);
-        CefDoMessageLoopWork();
-    } while (ret > 0);
-    */
 
     CefShutdown();
     return 0;

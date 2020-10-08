@@ -10,11 +10,7 @@ kg_target(
         main.cc
     WIN_SOURCES
         ../resources/kangaroo.manifest
-    LINK kg.util kg.webview cef::dll
+    LINK std.fs kg.util kg.webview cef.library
 )
 
 target_link_libraries(kg.browser ${wxWidgets_LIBRARIES})
-
-if(UNIX)
-    target_link_libraries(kg.browser stdc++fs)
-endif()

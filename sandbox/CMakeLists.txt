@@ -5,7 +5,7 @@ kg_target(
         sandbox.cc
     WIN_SOURCES
         ../resources/kangaroo.manifest
-    LINK kg.util cef::dll libcef_dll_wrapper
+    LINK std.fs kg.util cef.library cef.wrapper
 )
 
 if(UNIX)
