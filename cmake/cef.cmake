@@ -54,3 +54,13 @@ add_custom_target(
     CEF_RESOURCES ALL
     DEPENDS ${CEF_RESOURCE_FILES} ${CEF_BINARY_FILES} ${KG_OUTDIR}/locales
 )
+
+add_library(cef::dll INTERFACE IMPORTED GLOBAL)
+target_include_directories(cef::dll INTERFACE ${CEF_ROOT})
+target_link_directories(cef::dll INTERFACE ${CEF_ROOT}/${CMAKE_BUILD_TYPE})
+
+if(WIN32)
+    target_link_libraries(cef::dll INTERFACE libcef)
+else()
+    target_link_libraries(cef::dll INTERFACE cef)
+endif()

@@ -98,8 +98,6 @@ resizeBrowser(kg::WebView * webview, CefRefPtr<CefBrowser> browser, unsigned int
 #endif
 
 void kg::WebView::OnSize(wxSizeEvent & event) {
-    KG_LOG_TRACE();
-
     if (_cef && _cef->_browser) {
         resizeBrowser(this, _cef->_browser, event.GetSize().GetWidth(), event.GetSize().GetHeight());
     }

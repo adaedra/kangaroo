@@ -3,6 +3,10 @@ cmake_policy(SET CMP0074 NEW)
 cmake_policy(SET CMP0091 NEW)
 project(kangaroo)
 
+include(cmake/functions.cmake)
+
+set(MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 if(NOT DEFINED CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
 endif()
@@ -22,6 +26,7 @@ set(CMAKE_CXX_STANDARD 17)
 include_directories(${kangaroo_SOURCE_DIR}/include)
 
 set(KG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR}/bin)
+set(RUNTIME_OUTPUT_DIRECTORY ${KG_OUTDIR})
 add_custom_target(outdir ALL COMMAND ${CMAKE_COMMAND} -E make_directory ${KG_OUTDIR})
 
 add_subdirectory(util    kg.util)

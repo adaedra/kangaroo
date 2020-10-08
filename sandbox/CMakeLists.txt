@@ -1,11 +1,12 @@
-add_executable(kg.sandbox WIN32 sandbox.cc ../resources/kangaroo.manifest)
-set_target_properties(kg.sandbox PROPERTIES
-    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
-    RUNTIME_OUTPUT_DIRECTORY ${KG_OUTDIR}
+kg_target(
+    NAME kg.sandbox
+    TYPE BINARY
+    SOURCES
+        sandbox.cc
+    WIN_SOURCES
+        ../resources/kangaroo.manifest
+    LINK kg.util cef::dll libcef_dll_wrapper
 )
-target_link_libraries(kg.sandbox kg.util libcef_dll_wrapper cef)
-target_include_directories(kg.sandbox PUBLIC ${CEF_ROOT})
-target_link_directories(kg.sandbox PUBLIC ${CEF_ROOT}/${CMAKE_BUILD_TYPE})
 
 if(UNIX)
     target_link_libraries(kg.sandbox stdc++fs)
