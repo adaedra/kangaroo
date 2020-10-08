@@ -1,5 +1,5 @@
 #include "kg/util/log.hh"
-#include "kg_features.h"
+#include "kg_features.hh"
 
 #include <include/cef_app.h>
 #include <include/cef_client.h>

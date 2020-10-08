@@ -4,7 +4,7 @@
 #include "kg/util/defines.hh"
 #include "kg/util/log.hh"
 #include "kg/webview/webview.hh"
-#include "kg_features.h"
+#include "kg_features.hh"
 
 #include <functional>
 
