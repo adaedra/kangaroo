@@ -8,6 +8,8 @@
 
 #include <functional>
 
+void CefPreInit();
+
 class kg::App::CefBridge : public CefApp, public CefBrowserProcessHandler {
 public:
     CefBridge(kg::App * app) : CefApp {}, CefBrowserProcessHandler {}, _app { app }, _timer {} {
@@ -45,19 +47,9 @@ public:
     IMPLEMENT_REFCOUNTING(CefBridge);
 
 private:
-    void CefPreInit();
-
     kg::App * _app;
     wxTimer _timer;
 };
-
-#ifdef _WIN32
-void kg::App::CefBridge::CefPreInit() {
-    CefEnableHighDPISupport();
-}
-#else
-void kg::App::CefBridge::CefPreInit() {}
-#endif
 
 kg::App::App() : wxApp {}, _main_window { nullptr } {}
 
@@ -78,16 +70,6 @@ int kg::App::OnExit() {
 wxBEGIN_EVENT_TABLE(kg::App, wxApp)
     EVT_IDLE(kg::App::OnIdle)
 wxEND_EVENT_TABLE()
-
-#ifdef _WIN32
-CefMainArgs kg::App::GetCefMainArgs() {
-    return CefMainArgs { GetModuleHandleW(nullptr) };
-}
-#else
-CefMainArgs kg::App::GetCefMainArgs() {
-    return CefMainArgs { argc, argv };
-}
-#endif
 
 void kg::App::OnCefReady() {
     _main_window = new MainWindow {};

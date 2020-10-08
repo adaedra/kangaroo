@@ -1,4 +1,5 @@
 #pragma once
+#include "kg_features.hh"
 #include "kg_webview_export.hh"
 
 #include <include/cef_client.h>
@@ -10,7 +11,7 @@ namespace kg {
         KG_WEBVIEW_EXPORT WebView(wxWindow * parent);
         KG_WEBVIEW_EXPORT virtual ~WebView();
 
-#ifndef _WIN32
+#ifdef KG_PLATFORM_GTK
         virtual void GTKHandleRealized() override;
 #endif
 
@@ -20,6 +21,9 @@ namespace kg {
         virtual bool TryBefore(wxEvent &) override;
 
     private:
+        void FinishInit();
+        void PrepareWindow(CefWindowInfo &);
+        void ResizeBrowser(CefRefPtr<CefBrowser> & browser, unsigned int width, unsigned int height);
         void CreateBrowser();
         void OnSize(wxSizeEvent &);
         void OnDestroy(wxWindowDestroyEvent &);

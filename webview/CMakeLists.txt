@@ -12,6 +12,10 @@ kg_target(
     TYPE LIBRARY SHARED
     SOURCES
         webview.cc ../include/kg/webview/webview.hh
+    WIN_SOURCES
+        webview.win.cc
+    GTK_SOURCES
+        webview.gtk.cc
     LINK kg.util cef.library cef.wrapper
 )
     

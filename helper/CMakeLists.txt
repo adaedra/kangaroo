@@ -4,6 +4,9 @@ kg_target(
     SOURCES
         helper.cc
     WIN_SOURCES
+        helper.win.cc
         ../resources/kangaroo.manifest
+    GTK_SOURCES
+        helper.gtk.cc
     LINK cef.library cef.wrapper
 )

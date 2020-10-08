@@ -3,11 +3,11 @@ function(kg_target)
 
     set(KG_TARGET_ALL_SOURCES ${KG_TARGET_SOURCES})
 
-    if(WIN32)
+    if(KG_PLATFORM_WIN)
         list(APPEND KG_TARGET_ALL_SOURCES ${KG_TARGET_WIN_SOURCES})
     endif()
 
-    if(UNIX)
+    if(KG_PLATFORM_GTK)
         list(APPEND KG_TARGET_ALL_SOURCES ${KG_TARGET_GTK_SOURCES})
     endif()
 

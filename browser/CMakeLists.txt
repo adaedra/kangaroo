@@ -7,9 +7,13 @@ kg_target(
     SOURCES
         app.cc         ../include/kg/browser/app.hh
         main_window.cc ../include/kg/browser/main_window.hh
-        main.cc
     WIN_SOURCES
+        app.win.cc
+        main.win.cc
         ../resources/kangaroo.manifest
+    GTK_SOURCES
+        app.gtk.cc
+        main.gtk.cc
     LINK std.fs kg.util kg.webview cef.library
 )
 

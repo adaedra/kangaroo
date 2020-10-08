@@ -25,7 +25,7 @@ set(CEF_BINARY_FILES
     v8_context_snapshot.bin
 )
 
-if(WIN32)
+if(KG_PLATFORM_WIN)
     list(APPEND CEF_BINARY_FILES
         libcef.dll
         chrome_elf.dll
@@ -73,7 +73,7 @@ add_library(cef.library INTERFACE IMPORTED GLOBAL)
 target_include_directories(cef.library INTERFACE ${CEF_ROOT})
 target_link_directories(cef.library INTERFACE ${CEF_ROOT}/${CMAKE_BUILD_TYPE})
 
-if(WIN32)
+if(KG_PLATFORM_WIN)
     target_link_libraries(cef.library INTERFACE libcef)
 else()
     target_link_libraries(cef.library INTERFACE cef)

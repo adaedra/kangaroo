@@ -11,3 +11,6 @@ namespace std_fs_impl = std::experimental::filesystem;
 
 namespace std_fs_impl = std::filesystem;
 #endif
+
+#cmakedefine KG_PLATFORM_WIN
+#cmakedefine KG_PLATFORM_GTK
